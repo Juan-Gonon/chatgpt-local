@@ -90,6 +90,12 @@ form {
         padding: 8px;
         transition: background .3s ease;
 
+        &[disabled]{
+            background: #ccc;
+            opacity: .6;
+            pointer-events: none;
+        }
+
         &:hover{
             background: rgba(0,104,173,.5);
         }

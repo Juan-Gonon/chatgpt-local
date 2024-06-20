@@ -19,6 +19,14 @@ $form.addEventListener('submit', (e) => {
 
     addMessage(messageText, 'user')
 
+    $button.setAttribute('disabled', true)
+
+    setTimeout(() => {
+        addMessage('Hola ¿cómo estás?', 'bot')
+
+        $button.removeAttribute('disabled')
+    }, 2000)
+
 })
 
 function addMessage(text, sender){
