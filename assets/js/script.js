@@ -41,7 +41,7 @@ $form.addEventListener('submit', async(e) => {
 
     addMessage(messageText, 'user')
 
-    $button.setAttribute('disabled', true)
+    $button.setAttribute('disabled', '')
 
     // setTimeout(() => {
     //     addMessage('Hola ¿cómo estás?', 'bot')
@@ -57,14 +57,35 @@ $form.addEventListener('submit', async(e) => {
 
     messages.push(userMessage)
 
-    const reply = await engine.chat.completions.create({
-        messages
+    const chunks = await engine.chat.completions.create({
+        messages,
+        stream: true
     })
 
-    console.log(reply.choices[0].message)
-    const botMessage = reply.choices[0].message
-    messages.push(botMessage)
-    addMessage(botMessage.content, 'bot')
+    let reply = ''
+    const $botMessage = addMessage('', 'bot')
+
+    for await (const chunk of chunks){
+        // console.log(chunk.choices)
+        const choice = chunk.choices[0]
+        const content = choice?.delta?.content ?? ''
+        reply += content
+        $botMessage.textContent = reply
+
+
+
+
+    }
+
+    $button.removeAttribute('disabled')
+
+    // const botMessage = reply.choices[0].message
+    messages.push({
+        role : 'assistant',
+        content: reply
+    })
+    // addMessage(botMessage.content, 'bot')
+    $container.scrollTop = $container.scrollHeight
 
 })
 
@@ -85,5 +106,7 @@ function addMessage(text, sender){
     $messages.appendChild($newMessage)
     
     $container.scrollTop = $container.scrollHeight
+
+    return $text
 
 }
