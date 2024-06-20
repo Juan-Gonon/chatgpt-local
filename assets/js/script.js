@@ -1,4 +1,4 @@
-import {CreateMLCEngine} from "https://esm.run/@mlc-ai/web-llm";
+import {CreateWebWorkerMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
 
 
 const $ = el =>  document.querySelector(el)
@@ -13,12 +13,23 @@ const $button = $('button')
 
 let messages = []
 
+// if(window.Worker){
+//     const worker = new Worker('/assets/js/workers.js')
+//     worker.postMessage({name:'hello'})
+//     worker.onmessage = (e)=>{
+//         console.log('Main three: Message received from worker')
+//         console.log(e)
+//     }
+// }
+
 const SELECTED_MODEL = 'gemma-2b-it-q4f32_1-MLC'
 
-const engine = await CreateMLCEngine(SELECTED_MODEL, {
+const engine = await CreateWebWorkerMLCEngine(
+    new Worker('/assets/js/workers.js', {type : 'module'}),
+    SELECTED_MODEL, {
 
     initProgressCallback: (info) => {
-        console.log('init', info)
+        // console.log('init', info)
         info.textContent = `${info.text}%`
 
         if(info.progress === 1){
